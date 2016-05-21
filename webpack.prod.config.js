@@ -15,7 +15,7 @@ module.exports = {
     ]
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, '../stellaris-dist'),
     filename: '[name]' + outputFileTemplateSuffix + '.js',
     chunkFilename: '[id]' + outputFileTemplateSuffix + '.js'
   },
