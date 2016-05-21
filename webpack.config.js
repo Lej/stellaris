@@ -36,7 +36,7 @@ module.exports = {
       { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=10000&mimetype=application/font-woff2' },
       { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file' },
-      { test: /\.txt$|\.yml$/, loader: 'file?name=[path][name].[ext]' }
+      { test: /[\/\\]static[\/\\]/, loader: 'file?name=[path][name].[ext]&context=./src' }
     ]
   }
 };

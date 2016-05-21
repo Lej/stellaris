@@ -28,7 +28,7 @@ export class Welcome {
 
   activate() {
     //let staticFile = require('file!./stellaris/common/technology/00_eng_tech.txt');
-    let staticFile = require('./stellaris/common/technology/00_eng_tech.txt');
+    let staticFile = require('./static/common/technology/00_eng_tech.txt');
     console.log(staticFile);
   }
 }
