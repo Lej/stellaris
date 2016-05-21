@@ -16,6 +16,10 @@ export class Tokenizer {
             let {start, end, token} = this.getNextToken(text, current);
             tokens.push(token);
             current = end;
+            
+            if (token.type === Token.VARIABLE && /[^a-z0-9_]/i.test(token.value)) {
+                throw new Error("Tokenizer failed on: " + token.value);
+            }
         }
         
         return tokens;
@@ -26,21 +30,23 @@ export class Tokenizer {
         start = this.getNextNonWhitespace(text, start);
         let char = text.charAt(start);
         if (char === '@') {
-            return this.getMacroToken(text, start);
+            return this.getUntilWhitespaceToken(Token.MACRO, text, start);
         } else if (char === '=') {
-            return this.getAssignmentToken(text, start);
-        } else if (/[0-9]/.test(char)) {
+            return this.getSingleCharToken(Token.ASSIGNMENT, text, start);
+        } else if (/[\-0-9]/.test(char)) {
             return this.getNumberToken(text, start);
         } else if (char === '{') {
-            return this.getOpenToken(text, start);
+            return this.getSingleCharToken(Token.OPEN, text, start);
         } else if (char === '}') {
-            return this.getCloseToken(text, start);
+            return this.getSingleCharToken(Token.CLOSE, text, start);
         } else if (char === ">") {
-            return this.getGreaterToken(text, start);
+            return this.getSingleCharToken(Token.GREATER, text, start);
+        } else if (char === "<") {
+            return this.getSingleCharToken(Token.LESS, text, start);
         } else if (char === '"') {
             return this.getStringToken(text, start);
         } else {
-            return this.getVariableToken(text, start);
+            return this.getUntilWhitespaceToken(Token.VARIABLE, text, start);
         }
         
     }
@@ -56,52 +62,32 @@ export class Tokenizer {
         return new TokenResult(start, end, new Token(type, text.substring(start, end)));
     }
     
-    getMacroToken(text, start) {
+    getSingleCharToken(type, text, start) {
+        return this.getTokenResult(type, text, start, start + 1);
+    }
+    
+    getUntilWhitespaceToken(type, text, start) {
         let end = start;
         while(/\S/.test(text.charAt(end))) {
             end++;
         }
-        return this.getTokenResult(Token.MACRO, text, start, end);
+        return this.getTokenResult(type, text, start, end);
     }
-    
-    getAssignmentToken(text, start) {
-        return this.getTokenResult(Token.ASSIGNMENT, text, start, start + 1); 
-    }
-    
+
     getNumberToken(text, start) {
-        let end = start;
+        let end = start + 1;
         while (/[0-9\.]/.test(text.charAt(end))) {
             end++;
         }
         return this.getTokenResult(Token.NUMBER, text, start, end);
     }
-    
-    getOpenToken(text, start) {
-        return this.getTokenResult(Token.OPEN, text, start, start + 1);
-    }
-    
-    getCloseToken(text, start) {
-        return this.getTokenResult(Token.CLOSE, text, start, start + 1);
-    }
-    
+
     getStringToken(text, start) {
         let end = start + 1;
         while(text.charAt(end) !== '"') {
             end++;
         }
         return new TokenResult(start, end + 1, new Token(Token.STRING, text.substring(start + 1, end)));
-    }
-    
-    getVariableToken(text, start) {
-        let end = start;
-        while(/\S/.test(text.charAt(end))) {
-            end++;
-        }
-        return this.getTokenResult(Token.VARIABLE, text, start, end);
-    }
-    
-    getGreaterToken(text, start) {
-        return this.getTokenResult(Token.GREATER, text, start, start + 1);
     }
     
 }
