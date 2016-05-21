@@ -25,6 +25,12 @@ export class Welcome {
       return confirm('Are you sure you want to leave?');
     }
   }
+
+  activate() {
+    //let staticFile = require('file!./stellaris/common/technology/00_eng_tech.txt');
+    let staticFile = require('./stellaris/common/technology/00_eng_tech.txt');
+    console.log(staticFile);
+  }
 }
 
 export class UpperValueConverter {
