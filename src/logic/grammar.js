@@ -3,10 +3,18 @@
 
 
 {
+// [ { key: "key1.key2", value: "value" } ]
+// -> { key1: { key2: value } }
 function assignments(kvps) {
   let result = {};
   for (let kvp of kvps) {
-    result[kvp.key] = kvp.value;
+    let keys = kvp.key.split(".");
+    let current = result;
+    for (let i = 0; i < keys.length - 1; i++) {
+      current[keys[i]] = {};
+      current = current[keys[i]];
+    }
+    current[keys[keys.length - 1]] = kvp.value;
   }
   return result;
 }
@@ -23,7 +31,7 @@ assignedValue = v:(single / list) caw { return v }
 list = open caw v:single+ caw close { return v }
 single = v:(var / number) caw { return v }
 
-var = $(at varName / quotes varName quotes / varName)
+var = $(varName (dot varName)* / at varName / quotes varName quotes / varName)
 varName = $([a-zA-Z_][a-zA-Z0-9_]*)
 
 number = $([-]?([0] / [1-9][0-9]*)([\\.][0-9]+)?)
@@ -38,6 +46,7 @@ open = '{'
 close = '}'
 at = '@'
 quotes = '"'
+dot = '.'
 
 
 
