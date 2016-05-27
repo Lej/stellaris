@@ -1,16 +1,16 @@
 /* http://pegjs.org/online
 
 {
-// [ { key: "key1.key2", value: "value" } ]
-// -> { key1: { key2: value } }
+// [ { key: "key1.key2", oper: ">", value: "value" } ]
+// -> { key1: { oper: "=", value: { key2: { oper: ">", value: "value" } } } }
 function assignments(asses) {
   let result = {};
   for (let ass of asses) {
     let keys = ass.key.split(".");
     let current = result;
     for (let i = 0; i < keys.length - 1; i++) {
-      current[keys[i]] = {};
-      current = current[keys[i]];
+      current[keys[i]] = { oper: "=", value: { } };
+      current = current[keys[i]].value;
     }
     current[keys[keys.length - 1]] = { oper: ass.oper, value: ass.value } ;
   }
