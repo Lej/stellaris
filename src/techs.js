@@ -3,18 +3,24 @@ import {HttpClient} from 'aurelia-fetch-client';
 import {Mangler} from './logic/mangler';
 import {Preprocessor} from './logic/preprocessor';
 import {Tokenizer} from './logic/tokenizer';
-import {Parser} from './logic/parser';
 import {Script} from './logic/script';
+import {Stellaris} from './logic/stellaris';
 
-@inject(HttpClient)
+@inject(HttpClient, Stellaris)
 export class Technologies {
   heading = 'Technologies';
 
-  constructor(http) {
+  constructor(http, stellaris) {
     this.http = http;
+    this.stellaris = stellaris;
   }
 
   activate() {
+    this.stellaris.init();
+    var techs = this.stellaris.getTechs();
+  }
+
+  /*activate() {
     //return this.fetchAndParse('./static/common/technology/00_soc_tech_repeatable.txt');
     
     return this.fetchAndParse('./static/common/technology/00_eng_tech.txt')
@@ -37,6 +43,10 @@ export class Technologies {
   }
   
   parse(path, text) {
+    
+    var techs = Parser.getTechs();
+    
+    
     //console.log(text);
     console.log("Parsing " + path);
     let processedText = Preprocessor.preprocess(text);
@@ -44,5 +54,5 @@ export class Technologies {
     let result = Parser.parse(tokens);
     //console.log(result);
     console.log("Parsed " + path);
-  }
+  }*/
 }

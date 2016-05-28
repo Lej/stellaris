@@ -1,5 +1,4 @@
-/* http://pegjs.org/online
-
+// http://pegjs.org/online
 {
 // [ { key: "key1.key2", oper: ">", value: "value" } ]
 // -> { key1: { oper: "=", value: { key2: { oper: ">", value: "value" } } } }
@@ -38,9 +37,11 @@ oper = equals / greater / less
 
 caw "Comments and Whitespace" = (c / mws)*
 c "Comment" = $([#]+[^\n]*)
-ws "Whitespace" = [ \t\n]*
-mws "Mandatory Whitespace" = [ \t\n]+
-    
+ws "Optional Whitespace" = wsc*
+mws "Mandatory Whitespace" = wsc+
+wsc "Whitespace" = [ \t\r\n]
+n = [\r]?[\n]
+
 equals = '='
 greater = '>'
 less = '<'
@@ -49,5 +50,3 @@ close = '}'
 at = '@'
 quotes = '"'
 dot = '.'
-
-*/
