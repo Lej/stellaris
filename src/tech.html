@@ -1,0 +1,8 @@
+<template>
+    <div class="tech">
+        <div>${tech.id}</div>
+        <div repeat.for="prereq of tech.prereqs">
+            <div class="prereq">${prereq.id}</div>
+        </div>
+    </div>
+</template>

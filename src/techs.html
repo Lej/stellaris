@@ -1,2 +1,12 @@
 <template>
+    
+    <require from="./tech"></require>
+       
+    <h2>${heading}</h2>
+    <div>
+        <div repeat.for="tech of techs">
+            <tech tech.bind="tech"></tech>
+        </div>   
+    </div>
+    
 </template>

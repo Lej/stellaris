@@ -1,46 +1,28 @@
 // http://pegjs.org/online
-{
-// [ { key: "key1.key2", oper: ">", value: "value" } ]
-// -> { key1: { oper: "=", value: { key2: { oper: ">", value: "value" } } } }
-function assignments(asses) {
-  let result = {};
-  for (let ass of asses) {
-    let keys = ass.key.split(".");
-    let current = result;
-    for (let i = 0; i < keys.length - 1; i++) {
-      current[keys[i]] = { oper: "=", value: { } };
-      current = current[keys[i]].value;
-    }
-    current[keys[keys.length - 1]] = { oper: ass.oper, value: ass.value } ;
-  }
-  return result;
-}
-}
+script = _ ps:expr* _ { return ps }
 
-script = caw v:assignment* caw { return assignments(v) }
+expr = l:left _ o:oper _ r:right _ { return { oper: o, leftType: l.type, rightType: r.type, left: l.value, right: r.value } }
 
-assignment = k:var caw o:oper caw v:(assignmentList / assignedValue) caw { return { key: k, oper: o, value: v } }
+left = chainedIdentifier / identifier / macro
+right = value / exprs
 
-assignmentList = (open caw v:assignment* caw close) { return assignments(v) }
+exprs = open _ ps:expr* _ close { return { type: "expressions", value: ps } }
 
-assignedValue = v:(single / list) caw { return v }
+oper = o:(equals / greater / less) _ { return o }
 
-list = open caw v:single+ caw close { return v }
-single = v:(var / number) caw { return v }
+value = v:(list / macro / number / identifier / string) _ { return { type: v.type, value: v.value } }
+number = v:$([-]?([0] / [1-9][0-9]*)([\\.][0-9]+)?) { return { type: "number", value: Number(v) } }
+identifier = v:$([a-zA-Z0-9_]+) { return { type: "identifier", value: v } }
+chainedIdentifier = v:$(identifier (dot identifier)+) { return { type: "identifiers", value: v } }
+macro = at v:identifier { return { type: "macro", value: v.value } }
+string = quotes v:notQuotes quotes { return { type: "string", value: v } }
+list = open _ v:value+ _ close { return { type: "list", value: v } }
 
-var = $(varName (dot varName)* / at varName / quotes varName quotes / varName)
-varName = $([a-zA-Z_][a-zA-Z0-9_]*)
+notQuotes = $[^"]*
 
-number = $([-]?([0] / [1-9][0-9]*)([\\.][0-9]+)?)
-
-oper = equals / greater / less
-
-caw "Comments and Whitespace" = (c / mws)*
+_ "Comments and Whitespace" = (c / mws)*
 c "Comment" = $([#]+[^\n]*)
-ws "Optional Whitespace" = wsc*
-mws "Mandatory Whitespace" = wsc+
-wsc "Whitespace" = [ \t\r\n]
-n = [\r]?[\n]
+mws "Mandatory Whitespace" = [ \t\r\n]+
 
 equals = '='
 greater = '>'
