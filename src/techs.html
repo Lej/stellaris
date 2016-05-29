@@ -1,12 +1,14 @@
 <template>
     
     <require from="./tech"></require>
-       
+    <require from="./tech-attached"></require>
+        
     <h2>${heading}</h2>
     <div>
-        <div repeat.for="tech of techs">
+        <div class="tech-view" repeat.for="tech of techs">
             <tech tech.bind="tech"></tech>
-        </div>   
+            <tech-attached if.bind="$last"></tech-attached>
+        </div>
     </div>
     
 </template>

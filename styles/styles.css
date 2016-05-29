@@ -1,6 +1,6 @@
 .tech {
+  position: absolute;
   display: inline-block;
-  margin: 0.5em;
   border: 1px solid black;
 }
 
@@ -9,10 +9,22 @@
 }
 
 body {
-  padding-top: 50px; 
+  margin-top: 50px; 
 }
 
 .splash {
   font-size: 72px;
   margin-top: 50px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+  z-index: -1;
+}
+
+.svg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
