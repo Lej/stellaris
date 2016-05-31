@@ -1,4 +1,6 @@
 .tech {
+  width: 30em;
+  height: 6em;
   position: absolute;
   display: inline-block;
   border: 1px solid black;
@@ -27,4 +29,16 @@ body {
   position: absolute;
   top: 0px;
   left: 0px;
+}
+
+.engineering {
+  background: #99CCFF;
+}
+
+.physics {
+  background: #FFE684;
+}
+
+.society {
+  background: #CCFFCC;
 }

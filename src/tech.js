@@ -1,28 +1,35 @@
 import {bindable} from 'aurelia-framework';
 
 export class Tech {
-   
-    @bindable tech;
-    
-    techChanged(newValue) {
-        this.layout();
-    }
-    
-    attached() {
-        this.layout();
-    }
-    
-    layout() {
-        if (this.container === undefined) {
-            return;
-        }
-        var div = this.container;
-        //this.container.style.position = "absolute";
-        this.container.style.left = Math.round(this.tech.x - this.container.offsetWidth / 2) + 'px';
-        this.container.style.top = Math.round(this.tech.y - this.container.offsetHeight / 2) + 'px';
-        if (this.tech.id === "tech_mass_drivers_1") {
-            var asd = "";
-        }
+
+  @bindable tech;
+
+  /*techChanged(newValue) {
+    this.layout();
+  }*/
+
+  attached() {
+    this.layout();
+  }
+
+  layout() {
+    if (this.container === undefined) {
+      return;
     }
 
+    this.container.style.top = this.getTop(this.tech.row) + 'px';
+    this.container.style.left = this.getLeft(this.tech.col) + 'px';
+  }
+
+  getTop(row) {
+    let h = this.container.offsetHeight;
+    let top = Math.round((h + 20) * row + 100);
+    return top;
+  }
+
+  getLeft(col) {
+    let w = this.container.offsetWidth;
+    let left = Math.round((w + 100) * col);
+    return left;
+  }
 }
