@@ -1,0 +1,34 @@
+// http://pegjs.org/online
+script = _ ps:expr* _ { return ps }
+
+expr = l:left _ o:oper _ r:right _ { return { oper: o, leftType: l.type, rightType: r.type, left: l.value, right: r.value } }
+
+left = chainedIdentifier / identifier / macro
+right = value / exprs
+
+exprs = open _ ps:expr* _ close { return { type: "expressions", value: ps } }
+
+oper = o:(equals / greater / less) _ { return o }
+
+value = v:(list / macro / number / identifier / string) _ { return { type: v.type, value: v.value } }
+number = v:$([-]?([0] / [1-9][0-9]*)([\\.][0-9]+)?) { return { type: "number", value: Number(v) } }
+identifier = v:$([a-zA-Z0-9_]+) { return { type: "identifier", value: v } }
+chainedIdentifier = v:$(identifier (dot identifier)+) { return { type: "identifiers", value: v } }
+macro = at v:identifier { return { type: "macro", value: v.value } }
+string = quotes v:notQuotes quotes { return { type: "string", value: v } }
+list = open _ v:value+ _ close { return { type: "list", value: v } }
+
+notQuotes = $[^"]*
+
+_ "Comments and Whitespace" = (c / mws)*
+c "Comment" = $([#]+[^\n]*)
+mws "Mandatory Whitespace" = [ \t\r\n]+
+
+equals = '='
+greater = '>'
+less = '<'
+open = '{'
+close = '}'
+at = '@'
+quotes = '"'
+dot = '.'
