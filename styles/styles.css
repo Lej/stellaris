@@ -1,9 +1,17 @@
 .tech {
-  width: 30em;
-  height: 6em;
   position: absolute;
   display: inline-block;
   border: 1px solid black;
+}
+
+.tier {
+  margin-top: 50px; 
+  position: absolute;
+  display: inline-block;
+}
+
+tier.even > div.tier {
+  background: #eee;
 }
 
 .prereq {

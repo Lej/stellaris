@@ -1,11 +1,10 @@
 export class TechDto {
-    
-    id;
-    name;
-    prereqs = [];
-       
-    constructor(id) {
-        this.id = id;
-    }
-    
+
+  id;
+  name;
+  prereqs = [];
+
+  constructor(id) {
+    this.id = id;
+  }
 }

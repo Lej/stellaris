@@ -1,13 +1,15 @@
 <template>
     
     <require from="./tech"></require>
-    <require from="./tech-attached"></require>
+    <require from="./tier"></require>
         
-    <h2>${heading}</h2>
-    <div>
-        <div class="tech-view" repeat.for="tech of techs">
+    <div class="techs">
+        <div repeat.for="tier of tiers">
+            <tier tier.bind="tier" class="${ $even ? 'even' : 'odd' }"></tier>
+        </div>
+        <div class="svg"></div>
+        <div repeat.for="tech of techs">
             <tech tech.bind="tech"></tech>
-            <tech-attached if.bind="$last"></tech-attached>
         </div>
     </div>
     

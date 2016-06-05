@@ -91,9 +91,24 @@ export class Stellaris {
       techs.push(tech);
     }
 
+    for (let tech of techs) {
+      let prereqs = tech.prereqs;
+      let prereqsOfPrereqs = prereqs.selectMany(prereq => this.getPrereqsRecursive(prereq));
+      let prereqsOfPrereqsIds = prereqsOfPrereqs.map(prereqsOfPrereq => prereqsOfPrereq.id);
+      let filteredPrereqs = prereqs.filter(prereq => !prereqsOfPrereqsIds.includes(prereq.id));
+      tech.prereqs = filteredPrereqs;
+      if (prereqs.length !== filteredPrereqs.length) {
+        console.log(filteredPrereqs);
+      }
+    }
+
     return techs;
 
         //return [new TechDto("test1"), new TechDto("test2")]
+  }
+
+  getPrereqsRecursive(tech) {
+    return tech.prereqs.selectMany(prereq => [prereq, ...this.getPrereqsRecursive(prereq)]);
   }
 
   requireAll(context) {

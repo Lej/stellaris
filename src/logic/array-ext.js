@@ -62,5 +62,19 @@
       action(item, i);
     }
     return this;
-  }
+  };
+
+  Array.prototype.min = function(selector) {
+    if (selector === undefined) {
+      selector = x => x;
+    }
+    return Math.min(...this.map(selector));
+  };
+
+  Array.prototype.max = function(selector) {
+    if (selector === undefined) {
+      selector = x => x;
+    }
+    return Math.max(...this.map(selector));
+  };
 }());

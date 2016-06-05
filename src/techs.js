@@ -8,6 +8,8 @@ import {Stellaris} from './logic/stellaris';
 export class Technologies {
 
   heading = 'Technologies';
+  techs;
+  tiers;
 
   constructor(http, stellaris) {
     this.http = http;
@@ -17,14 +19,20 @@ export class Technologies {
   activate() {
     this.stellaris.getTechs()
       .then(techs => this.calculateLayout(techs))
-      .then(techs => this.techs = techs);
+      .then(techsAndTiers => this.draw(techsAndTiers))
+      .then(techsAndTiers => {
+        this.techs = techsAndTiers.techs;
+        this.tiers = techsAndTiers.tiers;
+      });
   }
 
   calculateLayout(techs) {
-    for (let tech of techs) {
-      tech.col = tech.tier;
-    }
+    let techWidth = 250;
+    let techHeight = 50;
+    let techHorizontalSpacing = 50;
+    let techVerticalSpacing = 20;
 
+    // Techs
     let areaGroups = techs
       .orderBy(x => x.id)
       .groupBy(x => x.area)
@@ -35,7 +43,72 @@ export class Technologies {
         }
       })}));
 
-    return techs;
+    for (let tech of techs) {
+      tech.col = tech.tier;
+      tech.width = techWidth;
+      tech.height = techHeight;
+      tech.left = tech.col * (tech.width + techHorizontalSpacing);
+      tech.top = tech.row * (tech.height + techVerticalSpacing) + 100;
+      tech.horizontalCenter = tech.left + tech.width / 2;
+      tech.verticalCenter = tech.top + tech.height / 2;
+      tech.right = tech.left + tech.width;
+      tech.bottom = tech.top + tech.height;
+    }
+
+    // Tiers
+    let maxTier = techs.max(tech => tech.tier);
+    let bottom = techs.max(tech => tech.bottom);
+    let tiers = [];
+    for (let i = 0; i <= maxTier; i++) {
+      let techsInTier = techs.filter(tech => tech.tier === i);
+      let left = 0;
+      if (i > 0) {
+        left = tiers.single(tier => tier.number === i - 1).right;
+      }
+      let right = techsInTier.max(tech => tech.right) + techHorizontalSpacing / 2;
+      let width = right - left;
+      let height = bottom;
+      let tier = {
+        number: i,
+        width: width,
+        height: height,
+        left: left,
+        top: 0,
+        right: right,
+        bottom: bottom
+      };
+      tiers.push(tier);
+    }
+
+    return { techs: techs, tiers: tiers };
+  }
+
+  draw(techsAndTiers) {
+    let techs = techsAndTiers.techs;
+    let width = techs.max(tech => tech.right);
+    let height = techs.max(tech => tech.bottom);
+
+    let links = techs.selectMany(tech => tech.prereqs.map(prereq => ({ source: tech, target: prereq})));
+
+    let svg = d3.select('.svg')
+      .insert('svg', ':first-child')
+      .attr('class', 'svg')
+      .attr('width', width)
+      .attr('height', height);
+
+    let link = svg.selectAll('.link')
+      .data(links)
+      .enter()
+      .append('line')
+      .attr('class', 'link')
+      .style('stroke-width', 1);
+
+    link.attr('x1', function(tech) { return tech.source.horizontalCenter; })
+      .attr('y1', function(tech) { return tech.source.verticalCenter; })
+      .attr('x2', function(tech) { return tech.target.horizontalCenter; })
+      .attr('y2', function(tech) { return tech.target.verticalCenter; });
+
+    return techsAndTiers;
   }
 
   depth(tech) {
