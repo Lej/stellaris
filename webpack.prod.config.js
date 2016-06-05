@@ -40,6 +40,7 @@ module.exports = {
   },
   module: {
     loaders: [
+      { test: /grammar\.txt/, loader: 'file' },
       { test: /\.js$/, loader: 'babel', exclude: /node_modules/, query: { presets: ['es2015-loose', 'stage-1'], plugins: ['transform-decorators-legacy'] } },
       { test: /\.css?$/, loader: 'style!css' },
       { test: /\.html$/, loader: 'html' },
